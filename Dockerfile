@@ -1,11 +1,14 @@
-FROM golang:alpine
+FROM golang:alpine as goalpine
 
-RUN echo "package main; \
-import \"fmt\"; \
-func main() { \
-fmt.Println(\"Code.education Rocks!\") }" > hello_world.go
+RUN mkdir /app
+COPY hello.go /app
+WORKDIR /app
+RUN go build hello.go
 
-ENTRYPOINT ["go", "run", "hello_world.go"]
+FROM alpine
 
-CMD ["echo", "end"]
+COPY --from=goalpine /app/hello /
+WORKDIR /
+CMD ["./hello"]
+
 
